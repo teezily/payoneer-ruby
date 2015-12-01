@@ -84,14 +84,14 @@ describe Payoneer::Payout do
     context 'when success response' do
       let(:success_response) {
         {
-          "PaymentID" => "payment1",
-          "Result" => "000",
-          "Description" => "",
-          "PaymentDate" => "04/30/2015 03:33:44",
-          "Amount" => "5.00",
-          "Status" => "Payment completed",
-          "LoadDate" => "04/30/2015 03:33:44",
-          "Curr" => "USD"
+          'PaymentID' => 'payment1',
+          'Result' => '000',
+          'Description' => '',
+          'PaymentDate' => '04/30/2015 03:33:44',
+          'Amount' => '5.00',
+          'Status' => 'Payment completed',
+          'LoadDate' => '04/30/2015 03:33:44',
+          'Curr' => 'USD'
         }
       }
 
@@ -111,8 +111,8 @@ describe Payoneer::Payout do
       context 'when invalid payment_id' do
         let(:error_response) {
           {
-            "Result" => "PE1026",
-            "Description" => "Invalid PaymentID or PayeeID"
+            'Result' => 'PE1026',
+            'Description' => 'Invalid PaymentID or PayeeID'
           }
         }
 
@@ -125,7 +125,7 @@ describe Payoneer::Payout do
           actual_response = described_class.status(params)
 
           expect(actual_response).to eq(expected_response)
-        expect(actual_response.ok?).to be false
+          expect(actual_response.ok?).to be false
         end
       end
     end
