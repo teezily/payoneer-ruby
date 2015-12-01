@@ -130,4 +130,42 @@ describe Payoneer::Payout do
       end
     end
   end
+
+  describe '.cancel' do
+    let(:payment_id) { 'payment1' }
+
+    let(:payoneer_params) {
+      {
+        p4: 'payment1'
+      }
+    }
+
+    context 'when success response' do
+      let(:success_response) {
+        {
+          'PaymentID' => 'payment1',
+          'Result' => '000',
+          'Amount' => '5.00',
+          'Curr' => 'USD',
+          'Description' => 'For your wonderful campaign'
+        }
+      }
+
+      it 'returns a response with hash' do
+        expect(Payoneer).to receive(:make_api_request).
+          with('CancelPayment', payoneer_params) { success_response }
+
+        expected_response = Payoneer::Response.new('000', success_response)
+        actual_response = described_class.cancel(payment_id)
+
+        expect(actual_response).to eq(expected_response)
+        expect(actual_response.ok?).to be true
+      end
+    end
+
+    pending 'when error response'
+    # Documentation seems not accurate about this case,
+    # need to test in true.
+
+  end
 end
