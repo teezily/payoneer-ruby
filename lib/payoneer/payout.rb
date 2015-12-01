@@ -29,7 +29,7 @@ module Payoneer
                                            payoneer_params)
 
       if success?(response)
-        Response.new(response['Result'], response['Status'])
+        Response.new_ok_response(response['Status'])
       else
         Response.new(response['Result'], response['Description'])
       end
