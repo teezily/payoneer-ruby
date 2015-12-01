@@ -28,7 +28,17 @@ module Payoneer
       response = Payoneer.make_api_request(GET_PAYMENT_STATUS_API_METHOD_NAME,
                                            payoneer_params)
 
-      Response.new(response['Result'], response['Status'])
+      if success?(response)
+        Response.new(response['Result'], response['Status'])
+      else
+        Response.new(response['Result'], response['Description'])
+      end
+    end
+
+    private
+
+    def self.success?(response)
+      response['Result'] == '000'
     end
   end
 end

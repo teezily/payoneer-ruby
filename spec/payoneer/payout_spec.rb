@@ -95,12 +95,32 @@ describe Payoneer::Payout do
         }
       }
 
-      context 'when payment status is completed' do
-        it 'returns a response with Payment completed' do
-          expect(Payoneer).to receive(:make_api_request).
-            with('GetPaymentStatus', payoneer_params) { success_response }
+      it 'returns a response with status' do
+        expect(Payoneer).to receive(:make_api_request).
+          with('GetPaymentStatus', payoneer_params) { success_response }
 
-          expected_response = Payoneer::Response.new('000', 'Payment completed')
+        expected_response = Payoneer::Response.new('000', 'Payment completed')
+        actual_response = described_class.status(params)
+
+        expect(actual_response).to eq(expected_response)
+      end
+    end
+
+    context 'when failed response' do
+      context 'when invalid payment_id' do
+        let(:error_response) {
+          {
+            "Result" => "PE1026",
+            "Description" => "Invalid PaymentID or PayeeID"
+          }
+        }
+
+        it 'returns an error response with description' do
+          expect(Payoneer).to receive(:make_api_request).
+            with('GetPaymentStatus', payoneer_params) { error_response }
+
+          expected_response =
+            Payoneer::Response.new('PE1026', 'Invalid PaymentID or PayeeID')
           actual_response = described_class.status(params)
 
           expect(actual_response).to eq(expected_response)
