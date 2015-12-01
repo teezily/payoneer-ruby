@@ -65,4 +65,47 @@ describe Payoneer::Payout do
       end
     end
   end
+
+  describe '.status' do
+    let(:params) {
+      {
+        payee_id: 'payee123',
+        payment_id: 'payment1'
+      }
+    }
+
+    let(:payoneer_params) {
+      {
+        p4: 'payee123',
+        p5: 'payment1'
+      }
+    }
+
+    context 'when success response' do
+      let(:success_response) {
+        {
+          "PaymentID" => "payment1",
+          "Result" => "000",
+          "Description" => "",
+          "PaymentDate" => "04/30/2015 03:33:44",
+          "Amount" => "5.00",
+          "Status" => "Payment completed",
+          "LoadDate" => "04/30/2015 03:33:44",
+          "Curr" => "USD"
+        }
+      }
+
+      context 'when payment status is completed' do
+        it 'returns a response with Payment completed' do
+          expect(Payoneer).to receive(:make_api_request).
+            with('GetPaymentStatus', payoneer_params) { success_response }
+
+          expected_response = Payoneer::Response.new('000', 'Payment completed')
+          actual_response = described_class.status(params)
+
+          expect(actual_response).to eq(expected_response)
+        end
+      end
+    end
+  end
 end
