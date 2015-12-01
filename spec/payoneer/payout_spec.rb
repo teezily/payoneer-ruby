@@ -103,6 +103,7 @@ describe Payoneer::Payout do
         actual_response = described_class.status(params)
 
         expect(actual_response).to eq(expected_response)
+        expect(actual_response.ok?).to be true
       end
     end
 
@@ -124,6 +125,7 @@ describe Payoneer::Payout do
           actual_response = described_class.status(params)
 
           expect(actual_response).to eq(expected_response)
+        expect(actual_response.ok?).to be false
         end
       end
     end
