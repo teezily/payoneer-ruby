@@ -61,6 +61,29 @@ response = Payoneer::Payout.create(
 )
 
 p 'Payout created!' if response.ok?
+
+# Status of a Payout
+
+response = Payoneer::Payout.status(payee_id: 'payee_1', payment_id: 'payment_1')
+p response.body
+=> 'Payment completed'
+
+# Cancel a Payout
+response = Payoneer::Payout.cancel('payment_1') # payment_id
+p response.body
+=> { 'PaymentID' => 'payment1',
+     'Result' => '000',
+     'Amount' => '5.00',
+     'Curr' => 'USD',
+     'Description' => 'Long description of the payout' }
+
+# Balance of the partner
+response = Payoneer::Partner.balance
+p response.body
+=> { 'FeesDue' => '110.45',
+     'AccountBalance' => '222.33',
+     'Curr' => 'USD' }
+
 ```
 
 ## Development
