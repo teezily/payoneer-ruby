@@ -163,9 +163,25 @@ describe Payoneer::Payout do
       end
     end
 
-    pending 'when error response'
-    # Documentation seems not accurate about this case,
-    # need to test in true.
+    context 'when error response' do
+      let(:error_response) {
+        {
+          'PaymentID' => 'payment1',
+          'Result' => 'PE1026',
+          'Description' => 'Invalid paymentId'
+        }
+      }
 
+      it 'returns an error response with description' do
+        expect(Payoneer).to receive(:make_api_request).
+          with('CancelPayment', payoneer_params) { error_response }
+
+        expected_response = Payoneer::Response.new('PE1026', 'Invalid paymentId')
+        actual_response = described_class.cancel(payment_id)
+
+        expect(actual_response).to eq(expected_response)
+        expect(actual_response.ok?).to be false
+      end
+    end
   end
 end
