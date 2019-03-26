@@ -6,6 +6,16 @@ describe Payoneer do
   end
 
   describe '.make_api_request' do
+    subject(:action) { Payoneer.make_api_request(method_name, params) }
+
+    let(:method_name) { 'method_name' }
+    let(:params) do
+      {
+        params1: 'params1'
+      }
+    end
+    let(:http_method) { :post }
+
     before do
       Payoneer.configure do |config|
         config.partner_username = 'user'
@@ -14,44 +24,28 @@ describe Payoneer do
       end
     end
 
-    context 'when the response is unsuccessful' do
-      before do
-        allow(RestClient).to receive(:post) { double(code: 500, body: '') }
-      end
-
-      it 'raises and UnexpectedResponseError if a response code other than 200 is returned' do
-        expect{ Payoneer.make_api_request('PayoneerMethod') }.to raise_error(Payoneer::Errors::UnexpectedResponseError)
-      end
+    it 'calls post on Payoneer::V1::Request' do
+      expect(Payoneer::V1::Request).to receive(http_method).with(method_name, params)
+      action
     end
 
-    context 'when the response is successful' do
-      let(:xml_response) {
-        <<-XML
-        <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-        <PerformPayoutPayment>
-          <Description></Description>
-          <PaymentID>1</PaymentID>
-          <Status>000</Status>
-          <PayoneerID>1</PayoneerID>
-        </PerformPayoutPayment>
-        XML
-      }
+    context 'v2 force in arg' do
+      subject(:action) { Payoneer.make_api_request(method_name, params, http_method, 2) }
 
-      let(:expected_hash_from_xml_response) {
-        {
-          "Description" => nil,
-          "PaymentID" => "1",
-          "Status" => "000",
-          "PayoneerID" => "1",
-        }
-      }
-
-      before do
-        allow(RestClient).to receive(:post) { double(code: 200, body: xml_response) }
+      it 'calls post on Payoneer::V2::Request' do
+        expect(Payoneer::V2::Request).to receive(http_method).with(method_name, params)
+        action
       end
 
-      it 'returns a hash from the Payoneer xml response' do
-        expect(Payoneer.make_api_request('PayoneerMethod')).to eq expected_hash_from_xml_response
+      context 'get http_method without params' do
+        subject(:action) { Payoneer.make_api_request(method_name, nil, http_method, 2) }
+
+        let(:http_method) { :get }
+
+        it 'calls get on Payoneer::V2::Request' do
+          expect(Payoneer::V2::Request).to receive(http_method).with(method_name)
+          action
+        end
       end
     end
 
