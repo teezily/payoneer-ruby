@@ -1,3 +1,5 @@
+require 'payoneer/v2/response'
+
 module Payoneer
   module V2
     class Request
@@ -25,7 +27,7 @@ module Payoneer
 
         fail Errors::UnexpectedResponseError.new(response.code, response.body) unless response.code == 200
 
-        JSON.parse(response.body)
+        Payoneer::V2::Response.new(JSON.parse(response.body))
       end
 
       def self.basic_auth
