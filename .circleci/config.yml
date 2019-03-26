@@ -18,7 +18,7 @@ jobs:
       - run:
           name: add JUNIT
           command: |
-            echo -e "\ngem 'rubocop-junit-formatter'" >> Gemfile
+            echo -e "\ngem 'rspec_junit_formatter'" >> Gemfile
 
       - run:
           name: install dependencies
