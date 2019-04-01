@@ -4,7 +4,7 @@ module Payoneer
       def self.post(method_name, params = {})
         request_params = default_params.merge(mname: method_name).merge(params)
 
-        response = RestClient.post(Payoneer.configuration.api_url_v2, request_params)
+        response = RestClient.post(Payoneer.configuration.api_url, request_params)
 
         fail Errors::UnexpectedResponseError.new(response.code, response.body) unless response.code == 200
 
