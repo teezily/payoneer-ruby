@@ -1,4 +1,6 @@
-FROM teezily/ruby-base:0.2
+FROM ruby:2.6.2-alpine3.9
+
+RUN apk add --no-cache git
 
 WORKDIR /home/app
 
