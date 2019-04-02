@@ -1,6 +1,4 @@
-FROM ruby:2.6.2-alpine3.9
-
-RUN apk add --no-cache git
+FROM ruby:2.6.2-stretch
 
 WORKDIR /home/app
 
