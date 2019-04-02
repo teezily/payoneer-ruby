@@ -53,6 +53,24 @@ describe Payoneer::Configuration do
     end
   end
 
+  describe '#api_url2' do
+    before do
+      config.partner_id = 1
+    end
+
+    it 'returns the v2 production url when the environment is production' do
+      config.environment = 'production'
+
+      expect(config.api_url_v2).to eq("#{described_class::PRODUCTION_API_URL_V2}programs/1/")
+    end
+
+    it 'returns the v2 development url when the environment is production' do
+      config.environment = 'development'
+
+      expect(config.api_url_v2).to eq("#{described_class::DEVELOPMENT_API_URL_V2}programs/1/")
+    end
+  end
+
   describe '#validate!' do
     it 'fails if the partner_id is not specified' do
       config.partner_username = 'user'
