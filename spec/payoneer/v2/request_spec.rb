@@ -4,7 +4,7 @@ require 'payoneer/v2/response'
 describe Payoneer::V2::Request do
   let(:username) { 'username' }
   let(:password) { 'password' }
-  let(:basic_auth) { Base64.encode64("Basic#{username}:#{password}") }
+  let(:basic_auth) { "Basic #{Base64.encode64("#{username}:#{password}") }" }
 
   let(:response_instance) do
     instance_double(Payoneer::V2::Response, raw_response: response)
@@ -19,18 +19,6 @@ describe Payoneer::V2::Request do
     allow(Payoneer::V2::Response).to receive(:new) { response_instance }
   end
 
-  shared_examples 'reponse_unsuccessful' do |http_method|
-    context 'when the response is unsuccessful' do
-      before do
-        allow(RestClient).to receive(http_method) { double(code: 500, body: '') }
-      end
-
-      it 'raises and UnexpectedResponseError if a response code other than 200 is returned' do
-        expect { action }.to raise_error(Payoneer::Errors::UnexpectedResponseError)
-      end
-    end
-  end
-
   describe '.post' do
     subject(:action) { described_class.post(path, params) }
 
@@ -41,8 +29,6 @@ describe Payoneer::V2::Request do
         test: 'test'
       }
     end
-
-    include_examples 'reponse_unsuccessful', :post
 
     context 'when the response is successful' do
       let(:response) do
@@ -81,8 +67,6 @@ describe Payoneer::V2::Request do
 
     let(:path) { 'charges' }
     let(:url) { "#{Payoneer.configuration.api_url_v2}#{path}" }
-
-    include_examples 'reponse_unsuccessful', :get
 
     context 'when the response is successful' do
       let(:response) do

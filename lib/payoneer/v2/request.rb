@@ -1,33 +1,41 @@
 require 'payoneer/v2/response'
+require 'faraday'
+require 'faraday_middleware'
+require 'payoneer/v2/http_middleware'
 
 module Payoneer
   module V2
     class Request
       def self.post(path, params = {})
-        call do
-          RestClient.post(
-            endpoint(path),
-            params.to_json,
-            headers
-          )
-        end
+        call(:post, path, params)
       end
 
       def self.get(path)
-        call do |response|
-          RestClient.get(
-            endpoint(path),
-            headers
-          )
-        end
+        call(:get, path)
       end
 
-      def self.call(&block)
-        response = yield
+      def self.call(method, path, params = {})
+        response = client.send(method) do |r|
+          r.url(path)
+          r.body = params.to_json if method == :post
+        end
+        Payoneer::V2::Response.new(response.body)
+      end
 
-        fail Errors::UnexpectedResponseError.new(response.code, response.body) unless response.code == 200
+      private
 
-        Payoneer::V2::Response.new(JSON.parse(response.body))
+      def self.client
+        Faraday.new(url: Payoneer.configuration.api_url_v2) do |f|
+          f.request :multipart
+          f.headers['Content-Type'] = 'application/json'
+          f.headers['Accept'] = 'application/json'
+          f.headers['Authorization'] = basic_auth
+          f.use Payoneer::HttpMiddleware
+          f.use FaradayMiddleware::ParseJson
+          f.request :url_encoded
+          f.response :logger, ::Logger.new(STDOUT), bodies: true if Payoneer.configuration.debug
+          f.adapter :excon
+        end
       end
 
       def self.basic_auth
@@ -35,15 +43,7 @@ module Payoneer
           Payoneer.configuration.partner_username,
          Payoneer.configuration.partner_api_password
         ].join(':')
-        Base64.encode64("Basic#{base}")
-      end
-
-      def self.headers
-        { content_type: :json, accept: :json, authorization: basic_auth }
-      end
-
-      def self.endpoint(path)
-        URI.join(Payoneer.configuration.api_url_v2, path).to_s
+        "Basic #{Base64.strict_encode64(base)}"
       end
     end
   end
