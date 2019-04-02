@@ -23,9 +23,9 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'rest-client'
   spec.add_dependency 'activesupport'
-  spec.add_dependency "faraday", ">= 0.11.0"
-  spec.add_dependency "faraday_middleware", "~> 0.11.0"
-  spec.add_dependency "excon", "~> 0.45.0"
+  spec.add_dependency "faraday", ">= 0.10.0", "~> 0.10"
+  spec.add_dependency "faraday_middleware", "~> 0.10.0"
+  spec.add_dependency "excon", ">= 0.58.0"
 
   spec.add_development_dependency 'guard-rspec', '~> 4.7.3'
   spec.add_development_dependency 'pry-byebug', '~> 3.6'
