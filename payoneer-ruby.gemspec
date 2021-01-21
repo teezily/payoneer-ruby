@@ -23,8 +23,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'rest-client'
   spec.add_dependency 'activesupport'
-  spec.add_dependency "faraday", ">= 0.10.0", "~> 0.10"
-  spec.add_dependency "faraday_middleware", "~> 0.10"
+  spec.add_dependency "faraday", "~> 1.0"
+  spec.add_dependency "faraday_middleware", "~> 1.0"
   spec.add_dependency "excon", ">= 0.58.0"
 
   spec.add_development_dependency 'guard-rspec', '~> 4.7.3'
@@ -32,6 +32,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'webmock'
-  spec.add_development_dependency 'bundler', '~> 1.7'
+  # spec.add_development_dependency 'bundler', '~> 1.7'
   spec.add_development_dependency 'rake', '~> 10.0'
 end
